@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <title>Attendance & Seat Distribution Calculator</title>
-  <!-- Load Pyodide -->
+  <!-- Load Pyodide from CDN -->
   <script src="https://cdn.jsdelivr.net/pyodide/v0.23.2/full/pyodide.js"></script>
   <style>
-    /* Basic styling for the page */
+    /* Basic styling */
     body {
       font-family: Arial, sans-serif;
       background-color: #f4f4f4;
@@ -24,13 +24,14 @@
     h1, h2 {
       text-align: center;
     }
-    .team-inputs {
+    /* Two team boxes side by side */
+    .team-container {
       display: flex;
       justify-content: space-between;
       margin-bottom: 20px;
     }
     .team-box {
-      width: 48%;
+      flex: 0 0 48%;
       background: #e9ecef;
       padding: 15px;
       border-radius: 5px;
@@ -45,17 +46,19 @@
     input[type="range"] {
       width: 100%;
     }
-    .slider-value {
-      font-weight: bold;
-    }
-    .combobox-container {
-      margin-bottom: 20px;
-    }
     select {
       width: 100%;
       padding: 8px;
       margin-top: 5px;
-      box-sizing: border-box;
+    }
+    /* Bottom controls for pitch, weather, and format */
+    .bottom-controls {
+      margin-top: 20px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .bottom-controls > div {
+      flex: 0 0 32%;
     }
     button {
       display: block;
@@ -66,7 +69,7 @@
       border: none;
       border-radius: 3px;
       cursor: pointer;
-      margin-top: 15px;
+      margin-top: 20px;
     }
     button:hover {
       background-color: #0056b3;
@@ -90,65 +93,97 @@
   <div class="container">
     <h1>Attendance & Seat Distribution Calculator</h1>
     <form id="attendanceForm">
-      <div class="team-inputs">
+      <!-- Team Parameters: Home and Away side by side -->
+      <div class="team-container">
         <!-- Home Team Box -->
-        <div class="team-box">
+        <div class="team-box" id="homeTeam">
           <h3>Home Team</h3>
           <label for="home_div">Division:</label>
-          <select id="home_div" required>
+          <select id="home_div" name="home_div" required>
             <option value="1">1</option>
             <option value="2">2</option>
             <option value="3">3</option>
             <option value="4">4</option>
             <option value="5">5</option>
           </select>
-          <label for="fan_base_home">Fan Base (0-50k): <span id="fan_base_home_val" class="slider-value">25000</span></label>
-          <input type="range" id="fan_base_home" min="0" max="50000" value="25000" step="100">
-          <label for="rating_home">Rating (800-2400): <span id="rating_home_val" class="slider-value">1600</span></label>
-          <input type="range" id="rating_home" min="800" max="2400" value="1600" step="10">
-          <label for="morale_home">Morale (0-100): <span id="morale_home_val" class="slider-value">50</span></label>
-          <input type="range" id="morale_home" min="0" max="100" value="50" step="1">
+
+          <label for="fan_base_home">Fan Base (0 - 50,000):</label>
+          <input type="range" id="fan_base_home" name="fan_base_home" min="0" max="50000" value="25000"
+                 oninput="document.getElementById('fan_base_home_val').innerText = this.value">
+          <span id="fan_base_home_val">25000</span>
+
+          <label for="rating_home">Rating (800 - 2400):</label>
+          <input type="range" id="rating_home" name="rating_home" min="800" max="2400" value="1600"
+                 oninput="document.getElementById('rating_home_val').innerText = this.value">
+          <span id="rating_home_val">1600</span>
+
+          <label for="morale_home">Morale (0 - 100):</label>
+          <input type="range" id="morale_home" name="morale_home" min="0" max="100" value="50"
+                 oninput="document.getElementById('morale_home_val').innerText = this.value">
+          <span id="morale_home_val">50</span>
         </div>
+
         <!-- Away Team Box -->
-        <div class="team-box">
+        <div class="team-box" id="awayTeam">
           <h3>Away Team</h3>
           <label for="away_div">Division:</label>
-          <select id="away_div" required>
+          <select id="away_div" name="away_div" required>
             <option value="1">1</option>
             <option value="2">2</option>
             <option value="3">3</option>
             <option value="4">4</option>
             <option value="5">5</option>
           </select>
-          <label for="fan_base_away">Fan Base (0-50k): <span id="fan_base_away_val" class="slider-value">25000</span></label>
-          <input type="range" id="fan_base_away" min="0" max="50000" value="25000" step="100">
-          <label for="rating_away">Rating (800-2400): <span id="rating_away_val" class="slider-value">1600</span></label>
-          <input type="range" id="rating_away" min="800" max="2400" value="1600" step="10">
-          <label for="morale_away">Morale (0-100): <span id="morale_away_val" class="slider-value">50</span></label>
-          <input type="range" id="morale_away" min="0" max="100" value="50" step="1">
+
+          <label for="fan_base_away">Fan Base (0 - 50,000):</label>
+          <input type="range" id="fan_base_away" name="fan_base_away" min="0" max="50000" value="25000"
+                 oninput="document.getElementById('fan_base_away_val').innerText = this.value">
+          <span id="fan_base_away_val">25000</span>
+
+          <label for="rating_away">Rating (800 - 2400):</label>
+          <input type="range" id="rating_away" name="rating_away" min="800" max="2400" value="1600"
+                 oninput="document.getElementById('rating_away_val').innerText = this.value">
+          <span id="rating_away_val">1600</span>
+
+          <label for="morale_away">Morale (0 - 100):</label>
+          <input type="range" id="morale_away" name="morale_away" min="0" max="100" value="50"
+                 oninput="document.getElementById('morale_away_val').innerText = this.value">
+          <span id="morale_away_val">50</span>
         </div>
       </div>
-      <!-- Bottom Comboboxes for Pitch and Weather -->
-      <div class="combobox-container">
-        <label for="pitch">Pitch:</label>
-        <select id="pitch" required>
-          <option value="Standard">Standard</option>
-          <option value="Flat">Flat</option>
-          <option value="Green">Green</option>
-          <option value="Dusty">Dusty</option>
-        </select>
+
+      <!-- Bottom controls: Pitch, Weather, and Format -->
+      <div class="bottom-controls">
+        <div>
+          <label for="pitch">Pitch:</label>
+          <select id="pitch" name="pitch" required>
+            <option value="Standard">Standard</option>
+            <option value="Flat">Flat</option>
+            <option value="Green">Green</option>
+            <option value="Dusty">Dusty</option>
+          </select>
+        </div>
+        <div>
+          <label for="weather">Weather:</label>
+          <select id="weather" name="weather" required>
+            <option value="Sunny">Sunny</option>
+            <option value="Overcast">Overcast</option>
+            <option value="Hot">Hot</option>
+          </select>
+        </div>
+        <div>
+          <label for="match_format">Format:</label>
+          <select id="match_format" name="match_format" required>
+            <option value="OD">OD</option>
+            <option value="T20">T20</option>
+          </select>
+        </div>
       </div>
-      <div class="combobox-container">
-        <label for="weather">Weather:</label>
-        <select id="weather" required>
-          <option value="Sunny">Sunny</option>
-          <option value="Overcast">Overcast</option>
-          <option value="Hot">Hot</option>
-        </select>
-      </div>
+      
       <button type="submit">Calculate</button>
     </form>
     
+    <!-- Results Display -->
     <div class="result" id="result" style="display:none;">
       <h2>Results</h2>
       <p id="totalAttendance"></p>
@@ -158,84 +193,66 @@
   </div>
 
   <script>
-    // Helper function to update slider display value.
-    function updateSliderValue(sliderId, displayId) {
-      const slider = document.getElementById(sliderId);
-      const display = document.getElementById(displayId);
-      display.innerText = slider.value;
-      slider.addEventListener('input', function() {
-        display.innerText = this.value;
-      });
-    }
-
-    // Initialize slider displays.
-    updateSliderValue('fan_base_home', 'fan_base_home_val');
-    updateSliderValue('rating_home', 'rating_home_val');
-    updateSliderValue('morale_home', 'morale_home_val');
-    updateSliderValue('fan_base_away', 'fan_base_away_val');
-    updateSliderValue('rating_away', 'rating_away_val');
-    updateSliderValue('morale_away', 'morale_away_val');
-
     async function main() {
-      // Load Pyodide.
+      // Load Pyodide
       const pyodide = await loadPyodide();
-      // Fetch the Python module (assumes the file is located at python/attendance.py in your repo).
+
+      // Fetch your Python module from the repository (assumed location: python/attendance.py)
       const response = await fetch('Attendance/Attendance.py');
       const pythonCode = await response.text();
-      // Execute the Python code in Pyodide to load your calculate_attendance function.
+
+      // Run the Python code to load your function into Pyodide
       pyodide.runPython(pythonCode);
 
-      // Form submission handler.
+      // Set up the form submission handler
       document.getElementById('attendanceForm').addEventListener('submit', function(event) {
         event.preventDefault();
 
-        // Gather Home Team inputs.
+        // Gather values from Home Team inputs
         const home_div = parseInt(document.getElementById('home_div').value);
         const fan_base_home = parseInt(document.getElementById('fan_base_home').value);
         const rating_home = parseInt(document.getElementById('rating_home').value);
         const morale_home = parseFloat(document.getElementById('morale_home').value);
 
-        // Gather Away Team inputs.
+        // Gather values from Away Team inputs
         const away_div = parseInt(document.getElementById('away_div').value);
         const fan_base_away = parseInt(document.getElementById('fan_base_away').value);
         const rating_away = parseInt(document.getElementById('rating_away').value);
         const morale_away = parseFloat(document.getElementById('morale_away').value);
 
-        // Gather Pitch and Weather inputs.
+        // Gather values from the bottom comboboxes
         const pitch = document.getElementById('pitch').value;
         const weather = document.getElementById('weather').value;
+        const match_format = document.getElementById('match_format').value;
 
-        // Get the Python function calculate_attendance from Pyodide's globals.
+        // Get the Python function from Pyodide's globals.
+        // (Your Python file should define a function called calculate_attendance.)
         const calculate_attendance = pyodide.globals.get("calculate_attendance");
 
-        // Call the Python function with the gathered parameters.
-        // It should return a tuple: (total_attendance, seat_distribution)
+        // Call the Python function with all parameters.
+        // Expected to return a tuple: (total_attendance, seat_distribution)
         const result = calculate_attendance(
-          home_div, away_div,
-          fan_base_home, fan_base_away,
-          morale_home, morale_away,
-          rating_home, rating_away,
-          pitch, weather
+          home_div, away_div, fan_base_home, fan_base_away,
+          morale_home, morale_away, rating_home, rating_away,
+          pitch, weather, match_format
         );
 
-        // Extract results.
-        const totalAttendance = result.get(0);
-        const seatDistribution = result.get(1).toJs();
+        // Extract values from the Python tuple.
+        const total = result.get(0);
+        const seat_distribution = result.get(1).toJs();
 
         // Display the results.
-        document.getElementById('totalAttendance').innerText = "Total Attendance: " + totalAttendance;
-        const seatDistributionList = document.getElementById('seatDistribution');
-        seatDistributionList.innerHTML = "";
-        for (const category in seatDistribution) {
-          const li = document.createElement("li");
-          li.innerText = category + ": " + seatDistribution[category];
-          seatDistributionList.appendChild(li);
+        document.getElementById('totalAttendance').innerText = "Total Attendance: " + total;
+        let seatListHTML = "";
+        for (const category in seat_distribution) {
+          seatListHTML += `<li>${category}: ${seat_distribution[category]}</li>`;
         }
+        document.getElementById('seatDistribution').innerHTML = seatListHTML;
         document.getElementById('result').style.display = "block";
       });
     }
 
-    // Start the Pyodide initialization.
+    // Initialize Pyodide and load your Python code.
     main();
   </script>
 </body>

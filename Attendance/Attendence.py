@@ -214,4 +214,4 @@ def calculate_attendance(
                                                morale_home, morale_away, rating_home, rating_away,
                                                weather, match_format, total_attendance)
 
-    return total_attendance, distribution
+    return (total_attendance, distribution)

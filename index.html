@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Attendance & Seat Distribution Calculator</title>
+  <!-- Load Pyodide from a CDN -->
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.23.2/full/pyodide.js"></script>
+  <style>
+    /* Basic styling for the page */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 20px;
+      color: #333;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    h1, h2 {
+      text-align: center;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+    }
+    input[type="number"], select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      box-sizing: border-box;
+    }
+    button {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      margin-top: 15px;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .result {
+      margin-top: 20px;
+      padding: 15px;
+      background: #e9ecef;
+      border-radius: 5px;
+    }
+    .result ul {
+      list-style: none;
+      padding: 0;
+    }
+    .result li {
+      margin: 5px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Attendance & Seat Distribution Calculator</h1>
+    <form id="attendanceForm">
+      <h2>Enter Match Parameters</h2>
+      
+      <label for="home_div">Home Division (1-5):</label>
+      <input type="number" id="home_div" name="home_div" min="1" max="5" required>
+      
+      <label for="away_div">Away Division (1-5):</label>
+      <input type="number" id="away_div" name="away_div" min="1" max="5" required>
+      
+      <label for="fan_base_home">Home Fan Base:</label>
+      <input type="number" id="fan_base_home" name="fan_base_home" required>
+      
+      <label for="fan_base_away">Away Fan Base:</label>
+      <input type="number" id="fan_base_away" name="fan_base_away" required>
+      
+      <label for="morale_home">Home Morale (0-100):</label>
+      <input type="number" id="morale_home" name="morale_home" min="0" max="100" required>
+      
+      <label for="morale_away">Away Morale (0-100):</label>
+      <input type="number" id="morale_away" name="morale_away" min="0" max="100" required>
+      
+      <label for="rating_home">Home Rating:</label>
+      <input type="number" id="rating_home" name="rating_home" required>
+      
+      <label for="rating_away">Away Rating:</label>
+      <input type="number" id="rating_away" name="rating_away" required>
+      
+      <label for="weather">Weather:</label>
+      <select id="weather" name="weather" required>
+        <option value="Sunny">Sunny</option>
+        <option value="Overcast">Overcast</option>
+        <option value="Hot">Hot</option>
+      </select>
+      
+      <label for="match_format">Match Format:</label>
+      <select id="match_format" name="match_format" required>
+        <option value="OD">OD</option>
+        <option value="T20">T20</option>
+      </select>
+      
+      <button type="submit">Calculate</button>
+    </form>
+    
+    <div class="result" id="result" style="display:none;">
+      <h2>Results</h2>
+      <p id="totalAttendance"></p>
+      <h3>Seat Distribution</h3>
+      <ul id="seatDistribution"></ul>
+    </div>
+  </div>
+
+  <script>
+    async function main() {
+      // Load Pyodide
+      const pyodide = await loadPyodide();
+
+      // Fetch your Python module from the repo.
+      // Assumes your file is located at `python/attendance.py`
+      const response = await fetch('python/attendance.py');
+      const pythonCode = await response.text();
+
+      // Run the Python code in Pyodide to load the function.
+      pyodide.runPython(pythonCode);
+
+      // Set up the form submission handler.
+      document.getElementById('attendanceForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        // Gather input values
+        const home_div = parseInt(document.getElementById('home_div').value);
+        const away_div = parseInt(document.getElementById('away_div').value);
+        const fan_base_home = parseInt(document.getElementById('fan_base_home').value);
+        const fan_base_away = parseInt(document.getElementById('fan_base_away').value);
+        const morale_home = parseFloat(document.getElementById('morale_home').value);
+        const morale_away = parseFloat(document.getElementById('morale_away').value);
+        const rating_home = parseInt(document.getElementById('rating_home').value);
+        const rating_away = parseInt(document.getElementById('rating_away').value);
+        const weather = document.getElementById('weather').value;
+        const match_format = document.getElementById('match_format').value;
+
+        // Get the Python function from Pyodide's globals.
+        // The function should have been defined in your Python file.
+        const calculate_attendance = pyodide.globals.get("calculate_attendance");
+
+        // Call the Python function with the provided parameters.
+        // It should return a tuple: (total_attendance, seat_distribution)
+        const result = calculate_attendance(
+          home_div, away_div, fan_base_home, fan_base_away,
+          morale_home, morale_away, rating_home, rating_away,
+          weather, match_format
+        );
+
+        // Extract the total attendance and seat distribution.
+        // (Assuming result is a Python tuple, with result[0] being total attendance and result[1] the seat distribution dictionary.)
+        const total = result.get(0);
+        const seat_distribution = result.get(1).toJs();
+
+        // Display the results.
+        document.getElementById('totalAttendance').innerText = "Total Attendance: " + total;
+        const seatList = document.getElementById('seatDistribution');
+        seatList.innerHTML = "";
+        for (const category in seat_distribution) {
+          const li = document.createElement("li");
+          li.innerText = category + ": " + seat_distribution[category];
+          seatList.appendChild(li);
+        }
+        document.getElementById('result').style.display = "block";
+      });
+    }
+
+    // Run the main function to load Pyodide and your Python code.
+    main();
+  </script>
+</body>
+</html>

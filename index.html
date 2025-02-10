@@ -3,8 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <title>Attendance & Seat Distribution Calculator</title>
-  <!-- Load Pyodide from a CDN -->
-  <script src="https://cdn.jsdelivr.net/pyodide/v0.23.2/full/pyodide.js"></script>
   <style>
     /* Basic styling */
     body {
@@ -212,81 +210,186 @@
     updateSliderValue('rating_away', 'rating_away_val');
     updateSliderValue('morale_away', 'morale_away_val');
 
-    async function main() {
-      // Load Pyodide
-      const pyodide = await loadPyodide();
-
-      // Fetch your Python module from the repository.
-      // Ensure that the file path is correct relative to the repository root.
-      const response = await fetch('Attendance/Attendance.py');
-      if (!response.ok) {
-        console.error("Failed to fetch python/attendance.py. Check the file path and GitHub Pages settings.");
-        return;
-      }
-      const pythonCode = await response.text();
-
-      // Run the Python code in Pyodide so that your function is available.
-      try {
-        pyodide.runPython(pythonCode);
-      } catch (err) {
-        console.error("Error running Python code:", err);
-      }
-
-      // Set up the form submission handler.
-      document.getElementById('attendanceForm').addEventListener('submit', async function(event) {
-        event.preventDefault();
-        try {
-          // Gather Home Team values
-          const home_div = parseInt(document.getElementById('home_div').value);
-          const fan_base_home = parseInt(document.getElementById('fan_base_home').value);
-          const rating_home = parseInt(document.getElementById('rating_home').value);
-          const morale_home = parseFloat(document.getElementById('morale_home').value);
-
-          // Gather Away Team values
-          const away_div = parseInt(document.getElementById('away_div').value);
-          const fan_base_away = parseInt(document.getElementById('fan_base_away').value);
-          const rating_away = parseInt(document.getElementById('rating_away').value);
-          const morale_away = parseFloat(document.getElementById('morale_away').value);
-
-          // Gather bottom options
-          const pitch = document.getElementById('pitch').value;
-          const weather = document.getElementById('weather').value;
-          const match_format = document.getElementById('match_format').value;
-
-          // Retrieve the Python function from Pyodide.
-          const calculate_attendance = pyodide.globals.get("calculate_attendance");
-
-          // Call the Python function. It should return a tuple: [total_attendance, seat_distribution]
-          const result = calculate_attendance(
-            home_div, away_div, fan_base_home, fan_base_away,
-            morale_home, morale_away, rating_home, rating_away,
-            pitch, weather, match_format
-          );
-
-          // Convert the result (a PyProxy) to a JavaScript object.
-          // Using toJs() converts the Python tuple into a JavaScript array.
-          const jsResult = result.toJs();
-          const total = jsResult[0];
-          const seat_distribution = jsResult[1]; // Already a plain JS object if returned correctly
-
-          // Display the results.
-          document.getElementById('totalAttendance').innerText = "Total Attendance: " + total;
-          const seatList = document.getElementById('seatDistribution');
-          seatList.innerHTML = "";
-          for (const category in seat_distribution) {
-            const li = document.createElement("li");
-            li.innerText = category + ": " + seat_distribution[category];
-            seatList.appendChild(li);
-          }
-          document.getElementById('result').style.display = "block";
-        } catch (error) {
-          console.error("Error during calculation:", error);
+    // Calculate attendance and seat distribution using JavaScript.
+    function calculateSeatDistribution(
+    homeDiv, awayDiv, fanBaseHome, fanBaseAway,
+    moraleHome, moraleAway, ratingHome, ratingAway,
+    weather, matchFormat, finalAttendance
+) {
+    const baseDistributions = {
+        "T20": {
+            1: [37, 26, 23, 14],
+            2: [40, 27, 20, 13],
+            3: [44, 26, 18, 12],
+            4: [46, 27, 15, 12],
+            5: [48, 27, 14, 11]
+        },
+        "OD": {
+            1: [41, 24, 19, 16],
+            2: [43, 25, 17, 15],
+            3: [45, 27, 15, 13],
+            4: [47, 28, 14, 11],
+            5: [49, 28, 13, 10]
         }
-      });
+    };
+
+    const weatherEffects = {
+        "Sunny": {
+            "T20": [1, 2, 2, 1],
+            "OD": [2, 2, 1, 1]
+        },
+        "Overcast": {
+            "T20": [-2, 3, 2, 1],
+            "OD": [-3, 2, 1, 0]
+        },
+        "Hot": {
+            "T20": [-4, 4, 3, -1],
+            "OD": [-5, 5, 4, -2]
+        }
+    };
+
+    let baseDist = baseDistributions[matchFormat][homeDiv];
+    let adjustments = [...weatherEffects[weather][matchFormat]];
+
+    if (fanBaseHome > fanBaseAway) {
+        adjustments[2] += 1;
+        adjustments[1] += 1;
+    } else {
+        adjustments[0] += 1;
     }
 
-    // Initialize Pyodide and load your Python code.
-    main();
+    if (moraleHome > 70) {
+        adjustments[2] += 1;
+        adjustments[3] += 1;
+    }
+
+    if (ratingHome > ratingAway) {
+        adjustments[2] += 2;
+    }
+
+    let adjustedDist = baseDist.map((val, i) => val + adjustments[i]);
+    let totalPercent = adjustedDist.reduce((a, b) => a + b, 0);
+    let normalizedDist = adjustedDist.map(p => p / totalPercent);
+
+    let seatCounts = normalizedDist.map(p => Math.round(p * finalAttendance));
+    let totalSeats = seatCounts.reduce((a, b) => a + b, 0);
+    let difference = finalAttendance - totalSeats;
+    if (difference !== 0) {
+        seatCounts[0] += difference;
+    }
+
+    return {
+        "Standard": seatCounts[0],
+        "Deluxe": seatCounts[1],
+        "Premium": seatCounts[2],
+        "Members": seatCounts[3]
+    };
+}
+
+function calculateHomeParticipation(homeDiv, awayDiv, weather, matchFormat) {
+    let baseHomeParticipation = 0.50;
+    let divisionFactor = (6 - homeDiv) * 0.04;
+    let awayDivisionFactor = (6 - awayDiv) * -0.03;
+
+    if (homeDiv === 1 && awayDiv === 5) return [0.83, 0.17];
+
+    const weatherFactors = { "Sunny": 0.05, "Overcast": 0.09, "Hot": 0.08 };
+    const formatFactors = { "OD": 0.02, "T20": 0.04 };
+    
+    let homeParticipation = baseHomeParticipation + divisionFactor + awayDivisionFactor + (weatherFactors[weather] || 0) + (formatFactors[matchFormat] || 0);
+    
+    if (homeDiv === awayDiv) {
+        homeParticipation = Math.max(0.58, Math.min(0.66, homeParticipation));
+    } else {
+        homeParticipation = Math.max(0.45, Math.min(0.70, homeParticipation));
+    }
+
+    return [parseFloat(homeParticipation.toFixed(2)), parseFloat((1 - homeParticipation).toFixed(2))];
+}
+
+function logisticFunction(x, midpoint, steepness, maxValue) {
+    return maxValue / (1 + Math.exp(-steepness * (x - midpoint)));
+}
+
+function calculateAttendance(
+    homeDiv, awayDiv, fanBaseHome, fanBaseAway,
+    moraleHome, moraleAway, ratingHome, ratingAway,
+    weather, matchFormat
+) {
+    const BASE_DIV_ATTENDANCE_RANGE = {
+        5: [800, 1200], 4: [3000, 4000], 3: [5000, 7000], 2: [8500, 10500], 1: [15000, 18000]
+    };
+
+    function getBaseAttendance(div, rating) {
+        let [baseLower, baseUpper] = BASE_DIV_ATTENDANCE_RANGE[div];
+        return baseLower + ((rating - 800) / (2400 - 800)) * (baseUpper - baseLower);
+    }
+
+    let baseHome = getBaseAttendance(homeDiv, ratingHome);
+    let baseAway = getBaseAttendance(awayDiv, ratingAway);
+
+    let casualHome = baseHome * 1.1;
+    let casualAway = baseAway * 0.6;
+
+    let moraleImpactHome = logisticFunction(moraleHome, 50, 0.15, 0.1);
+    let moraleImpactAway = logisticFunction(moraleAway, 50, 0.15, 0.1);
+
+    let loyalHome = Math.round(fanBaseHome * (1 + moraleImpactHome));
+    let loyalAway = Math.round(fanBaseAway * (1 + moraleImpactAway));
+
+    let adjustedHome = Math.round(casualHome + loyalHome);
+    let adjustedAway = Math.round(casualAway + loyalAway);
+    
+    let [homePart, awayPart] = calculateHomeParticipation(homeDiv, awayDiv, weather, matchFormat);
+    
+    let totalAttendance = Math.round(adjustedHome * homePart) + Math.round(adjustedAway * awayPart);
+
+    let distribution = calculateSeatDistribution(homeDiv, awayDiv, fanBaseHome, fanBaseAway,
+                                                 moraleHome, moraleAway, ratingHome, ratingAway,
+                                                 weather, matchFormat, totalAttendance);
+
+    return { totalAttendance, distribution };
+}
+
+    // Form submission handler.
+    document.getElementById('attendanceForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      // Gather Home Team values.
+      const home_div = parseInt(document.getElementById('home_div').value);
+      const fan_base_home = parseInt(document.getElementById('fan_base_home').value);
+      const rating_home = parseInt(document.getElementById('rating_home').value);
+      const morale_home = parseFloat(document.getElementById('morale_home').value);
+
+      // Gather Away Team values.
+      const away_div = parseInt(document.getElementById('away_div').value);
+      const fan_base_away = parseInt(document.getElementById('fan_base_away').value);
+      const rating_away = parseInt(document.getElementById('rating_away').value);
+      const morale_away = parseFloat(document.getElementById('morale_away').value);
+
+      // Gather bottom options.
+      const pitch = document.getElementById('pitch').value;
+      const weather = document.getElementById('weather').value;
+      const match_format = document.getElementById('match_format').value;
+
+      // Call the calculateAttendance function.
+      const result = calculateAttendance(
+        home_div, away_div, fan_base_home, fan_base_away,
+        morale_home, morale_away, rating_home, rating_away,
+        pitch, weather, match_format
+      );
+
+      // Display the results.
+      document.getElementById('totalAttendance').innerText = "Total Attendance: " + result.total_attendance;
+      const seatList = document.getElementById('seatDistribution');
+      seatList.innerHTML = "";
+      for (const category in result.seat_distribution) {
+        const li = document.createElement("li");
+        li.innerText = category + ": " + result.seat_distribution[category];
+        seatList.appendChild(li);
+      }
+      document.getElementById('result').style.display = "block";
+    });
   </script>
 </body>
 </html>

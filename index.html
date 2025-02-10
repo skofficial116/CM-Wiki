@@ -217,60 +217,71 @@
       const pyodide = await loadPyodide();
 
       // Fetch your Python module from the repository.
-      // This assumes your Python file is in the "python" folder and named "attendance.py".
+      // Ensure that the file path is correct relative to the repository root.
       const response = await fetch('Attendance/Attendance.py');
+      if (!response.ok) {
+        console.error("Failed to fetch python/attendance.py. Check the file path and GitHub Pages settings.");
+        return;
+      }
       const pythonCode = await response.text();
 
       // Run the Python code in Pyodide so that your function is available.
-      pyodide.runPython(pythonCode);
+      try {
+        pyodide.runPython(pythonCode);
+      } catch (err) {
+        console.error("Error running Python code:", err);
+      }
 
       // Set up the form submission handler.
-      document.getElementById('attendanceForm').addEventListener('submit', function(event) {
+      document.getElementById('attendanceForm').addEventListener('submit', async function(event) {
         event.preventDefault();
+        try {
+          // Gather Home Team values
+          const home_div = parseInt(document.getElementById('home_div').value);
+          const fan_base_home = parseInt(document.getElementById('fan_base_home').value);
+          const rating_home = parseInt(document.getElementById('rating_home').value);
+          const morale_home = parseFloat(document.getElementById('morale_home').value);
 
-        // Gather values for Home Team
-        const home_div = parseInt(document.getElementById('home_div').value);
-        const fan_base_home = parseInt(document.getElementById('fan_base_home').value);
-        const rating_home = parseInt(document.getElementById('rating_home').value);
-        const morale_home = parseFloat(document.getElementById('morale_home').value);
+          // Gather Away Team values
+          const away_div = parseInt(document.getElementById('away_div').value);
+          const fan_base_away = parseInt(document.getElementById('fan_base_away').value);
+          const rating_away = parseInt(document.getElementById('rating_away').value);
+          const morale_away = parseFloat(document.getElementById('morale_away').value);
 
-        // Gather values for Away Team
-        const away_div = parseInt(document.getElementById('away_div').value);
-        const fan_base_away = parseInt(document.getElementById('fan_base_away').value);
-        const rating_away = parseInt(document.getElementById('rating_away').value);
-        const morale_away = parseFloat(document.getElementById('morale_away').value);
+          // Gather bottom options
+          const pitch = document.getElementById('pitch').value;
+          const weather = document.getElementById('weather').value;
+          const match_format = document.getElementById('match_format').value;
 
-        // Gather bottom options
-        const pitch = document.getElementById('pitch').value;
-        const weather = document.getElementById('weather').value;
-        const match_format = document.getElementById('match_format').value;
+          // Retrieve the Python function from Pyodide.
+          const calculate_attendance = pyodide.globals.get("calculate_attendance");
 
-        // Get the Python function (it should now be defined in your Python module).
-        // Ensure that your Python function signature matches the parameters provided.
-        const calculate_attendance = pyodide.globals.get("calculate_attendance");
+          // Call the Python function. It should return a tuple: [total_attendance, seat_distribution]
+          const result = calculate_attendance(
+            home_div, away_div, fan_base_home, fan_base_away,
+            morale_home, morale_away, rating_home, rating_away,
+            pitch, weather, match_format
+          );
 
-        // Call the Python function. (The function is expected to return a tuple: [total_attendance, seat_distribution])
-        const result = calculate_attendance(
-          home_div, away_div, fan_base_home, fan_base_away,
-          morale_home, morale_away, rating_home, rating_away,
-          pitch, weather, match_format
-        );
+          // Convert the result (a PyProxy) to a JavaScript object.
+          // Using toJs() converts the Python tuple into a JavaScript array.
+          const jsResult = result.toJs();
+          const total = jsResult[0];
+          const seat_distribution = jsResult[1]; // Already a plain JS object if returned correctly
 
-        // Process the result.
-        // Expecting a Python tuple where index 0 is total attendance and index 1 is a dictionary for seat distribution.
-        const total = result.get(0);
-        const seat_distribution = result.get(1).toJs();
-
-        // Display the results.
-        document.getElementById('totalAttendance').innerText = "Total Attendance: " + total;
-        const seatList = document.getElementById('seatDistribution');
-        seatList.innerHTML = "";
-        for (const category in seat_distribution) {
-          const li = document.createElement("li");
-          li.innerText = category + ": " + seat_distribution[category];
-          seatList.appendChild(li);
+          // Display the results.
+          document.getElementById('totalAttendance').innerText = "Total Attendance: " + total;
+          const seatList = document.getElementById('seatDistribution');
+          seatList.innerHTML = "";
+          for (const category in seat_distribution) {
+            const li = document.createElement("li");
+            li.innerText = category + ": " + seat_distribution[category];
+            seatList.appendChild(li);
+          }
+          document.getElementById('result').style.display = "block";
+        } catch (error) {
+          console.error("Error during calculation:", error);
         }
-        document.getElementById('result').style.display = "block";
       });
     }
 

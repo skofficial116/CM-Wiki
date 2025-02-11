@@ -1,395 +1,96 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Attendance & Seat Distribution Calculator</title>
-  <style>
-    /* Basic styling */
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
-      margin: 20px;
-      color: #333;
-    }
-    .container {
-      max-width: 900px;
-      margin: auto;
-      background: #fff;
-      padding: 20px;
-      border-radius: 5px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    h1, h2 {
-      text-align: center;
-    }
-    form {
-      margin-top: 20px;
-    }
-    .team-boxes {
-      display: flex;
-      justify-content: space-between;
-      gap: 20px;
-      flex-wrap: wrap;
-    }
-    .team-box {
-      flex: 1;
-      min-width: 300px;
-      background: #e9ecef;
-      padding: 15px;
-      border-radius: 5px;
-    }
-    .team-box h3 {
-      text-align: center;
-      margin-top: 0;
-    }
-    label {
-      display: block;
-      margin-top: 10px;
-    }
-    select, input[type="range"] {
-      width: 100%;
-      padding: 5px;
-      margin-top: 5px;
-      box-sizing: border-box;
-    }
-    .slider-value {
-      font-size: 0.9em;
-      color: #555;
-      text-align: right;
-    }
-    .bottom-options {
-      display: flex;
-      justify-content: space-between;
-      gap: 20px;
-      margin-top: 20px;
-      flex-wrap: wrap;
-    }
-    .bottom-options > div {
-      flex: 1;
-      min-width: 200px;
-    }
-    button {
-      display: block;
-      width: 100%;
-      padding: 10px;
-      background-color: #007bff;
-      color: #fff;
-      border: none;
-      border-radius: 3px;
-      cursor: pointer;
-      margin-top: 20px;
-    }
-    button:hover {
-      background-color: #0056b3;
-    }
-    .result {
-      margin-top: 30px;
-      padding: 15px;
-      background: #e9ecef;
-      border-radius: 5px;
-    }
-    .result ul {
-      list-style: none;
-      padding: 0;
-    }
-    .result li {
-      margin: 5px 0;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cricket Attendance Calculator</title>
+    <script>
+        async function calculateAttendance() {
+            let data = {
+                home_div: parseInt(document.getElementById("home_div").value),
+                away_div: parseInt(document.getElementById("away_div").value),
+                fan_base_home: parseInt(document.getElementById("fan_base_home").value),
+                fan_base_away: parseInt(document.getElementById("fan_base_away").value),
+                morale_home: parseInt(document.getElementById("morale_home").value),
+                morale_away: parseInt(document.getElementById("morale_away").value),
+                rating_home: parseInt(document.getElementById("rating_home").value),
+                rating_away: parseInt(document.getElementById("rating_away").value),
+                weather: document.getElementById("weather").value,
+                match_format: document.getElementById("match_format").value
+            };
+
+            let response = await fetch("https://your-backend-url/calculate", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            });
+
+            let result = await response.json();
+            document.getElementById("result").innerHTML = `
+                <h3>Total Attendance: ${result.total_attendance}</h3>
+                <h4>Seat Distribution:</h4>
+                <p>Standard: ${result.seat_distribution.Standard}</p>
+                <p>Deluxe: ${result.seat_distribution.Deluxe}</p>
+                <p>Premium: ${result.seat_distribution.Premium}</p>
+                <p>Members: ${result.seat_distribution.Members}</p>
+            `;
+        }
+    </script>
 </head>
 <body>
-  <div class="container">
-    <h1>Attendance & Seat Distribution Calculator</h1>
-    <form id="attendanceForm">
-      <div class="team-boxes">
-        <!-- Home Team Parameters -->
-        <div class="team-box">
-          <h3>Home Team</h3>
-          <label for="home_div">Division:</label>
-          <select id="home_div" name="home_div" required>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-          </select>
-          
-          <label for="fan_base_home">Fan Base (0–50,000):</label>
-          <input type="range" id="fan_base_home" name="fan_base_home" min="0" max="50000" step="100" value="25000" required>
-          <div class="slider-value" id="fan_base_home_val">25000</div>
-          
-          <label for="rating_home">Rating (800–2400):</label>
-          <input type="range" id="rating_home" name="rating_home" min="800" max="2400" step="10" value="1600" required>
-          <div class="slider-value" id="rating_home_val">1600</div>
-          
-          <label for="morale_home">Morale (0–100):</label>
-          <input type="range" id="morale_home" name="morale_home" min="0" max="100" step="1" value="50" required>
-          <div class="slider-value" id="morale_home_val">50</div>
-        </div>
-        
-        <!-- Away Team Parameters -->
-        <div class="team-box">
-          <h3>Away Team</h3>
-          <label for="away_div">Division:</label>
-          <select id="away_div" name="away_div" required>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-          </select>
-          
-          <label for="fan_base_away">Fan Base (0–50,000):</label>
-          <input type="range" id="fan_base_away" name="fan_base_away" min="0" max="50000" step="100" value="25000" required>
-          <div class="slider-value" id="fan_base_away_val">25000</div>
-          
-          <label for="rating_away">Rating (800–2400):</label>
-          <input type="range" id="rating_away" name="rating_away" min="800" max="2400" step="10" value="1600" required>
-          <div class="slider-value" id="rating_away_val">1600</div>
-          
-          <label for="morale_away">Morale (0–100):</label>
-          <input type="range" id="morale_away" name="morale_away" min="0" max="100" step="1" value="50" required>
-          <div class="slider-value" id="morale_away_val">50</div>
-        </div>
-      </div>
-      
-      <!-- Bottom Options for Pitch, Weather, and Match Format -->
-      <div class="bottom-options">
-        <div>
-          <label for="pitch">Pitch:</label>
-          <select id="pitch" name="pitch" required>
-            <option value="Standard">Standard</option>
-            <option value="Flat">Flat</option>
-            <option value="Green">Green</option>
-            <option value="Dusty">Dusty</option>
-          </select>
-        </div>
-        <div>
-          <label for="weather">Weather:</label>
-          <select id="weather" name="weather" required>
-            <option value="Sunny">Sunny</option>
-            <option value="Overcast">Overcast</option>
-            <option value="Hot">Hot</option>
-          </select>
-        </div>
-        <div>
-          <label for="match_format">Match Format:</label>
-          <select id="match_format" name="match_format" required>
-            <option value="OD">OD</option>
-            <option value="T20">T20</option>
-          </select>
-        </div>
-      </div>
-      
-      <button type="submit">Calculate</button>
-    </form>
-    
-    <div class="result" id="result" style="display:none;">
-      <h2>Results</h2>
-      <p id="totalAttendance"></p>
-      <h3>Seat Distribution</h3>
-      <ul id="seatDistribution"></ul>
-    </div>
-  </div>
-  
-  <script>
-    // Update slider values in real time
-    function updateSliderValue(sliderId, displayId) {
-      const slider = document.getElementById(sliderId);
-      const display = document.getElementById(displayId);
-      display.innerText = slider.value;
-      slider.oninput = function() {
-        display.innerText = this.value;
-      };
-    }
-    
-    updateSliderValue('fan_base_home', 'fan_base_home_val');
-    updateSliderValue('rating_home', 'rating_home_val');
-    updateSliderValue('morale_home', 'morale_home_val');
-    updateSliderValue('fan_base_away', 'fan_base_away_val');
-    updateSliderValue('rating_away', 'rating_away_val');
-    updateSliderValue('morale_away', 'morale_away_val');
+    <h2>Cricket Attendance Calculator</h2>
 
-    // Calculate attendance and seat distribution using JavaScript.
-    function calculateSeatDistribution(
-    homeDiv, awayDiv, fanBaseHome, fanBaseAway,
-    moraleHome, moraleAway, ratingHome, ratingAway,
-    weather, matchFormat, finalAttendance
-) {
-    const baseDistributions = {
-        "T20": {
-            1: [37, 26, 23, 14],
-            2: [40, 27, 20, 13],
-            3: [44, 26, 18, 12],
-            4: [46, 27, 15, 12],
-            5: [48, 27, 14, 11]
-        },
-        "OD": {
-            1: [41, 24, 19, 16],
-            2: [43, 25, 17, 15],
-            3: [45, 27, 15, 13],
-            4: [47, 28, 14, 11],
-            5: [49, 28, 13, 10]
-        }
-    };
+    <label>Home Division:</label>
+    <select id="home_div">
+        <option value="1">Division 1</option>
+        <option value="2">Division 2</option>
+        <option value="3">Division 3</option>
+        <option value="4">Division 4</option>
+        <option value="5">Division 5</option>
+    </select>
 
-    const weatherEffects = {
-        "Sunny": {
-            "T20": [1, 2, 2, 1],
-            "OD": [2, 2, 1, 1]
-        },
-        "Overcast": {
-            "T20": [-2, 3, 2, 1],
-            "OD": [-3, 2, 1, 0]
-        },
-        "Hot": {
-            "T20": [-4, 4, 3, -1],
-            "OD": [-5, 5, 4, -2]
-        }
-    };
+    <label>Away Division:</label>
+    <select id="away_div">
+        <option value="1">Division 1</option>
+        <option value="2">Division 2</option>
+        <option value="3">Division 3</option>
+        <option value="4">Division 4</option>
+        <option value="5">Division 5</option>
+    </select>
 
-    let baseDist = baseDistributions[matchFormat][homeDiv];
-    let adjustments = [...weatherEffects[weather][matchFormat]];
+    <label>Home Fan Base (0-50000):</label>
+    <input type="range" id="fan_base_home" min="0" max="50000" value="10000">
 
-    if (fanBaseHome > fanBaseAway) {
-        adjustments[2] += 1;
-        adjustments[1] += 1;
-    } else {
-        adjustments[0] += 1;
-    }
+    <label>Away Fan Base (0-50000):</label>
+    <input type="range" id="fan_base_away" min="0" max="50000" value="10000">
 
-    if (moraleHome > 70) {
-        adjustments[2] += 1;
-        adjustments[3] += 1;
-    }
+    <label>Home Morale (0-100):</label>
+    <input type="range" id="morale_home" min="0" max="100" value="50">
 
-    if (ratingHome > ratingAway) {
-        adjustments[2] += 2;
-    }
+    <label>Away Morale (0-100):</label>
+    <input type="range" id="morale_away" min="0" max="100" value="50">
 
-    let adjustedDist = baseDist.map((val, i) => val + adjustments[i]);
-    let totalPercent = adjustedDist.reduce((a, b) => a + b, 0);
-    let normalizedDist = adjustedDist.map(p => p / totalPercent);
+    <label>Home Rating (800-2400):</label>
+    <input type="range" id="rating_home" min="800" max="2400" value="1600">
 
-    let seatCounts = normalizedDist.map(p => Math.round(p * finalAttendance));
-    let totalSeats = seatCounts.reduce((a, b) => a + b, 0);
-    let difference = finalAttendance - totalSeats;
-    if (difference !== 0) {
-        seatCounts[0] += difference;
-    }
+    <label>Away Rating (800-2400):</label>
+    <input type="range" id="rating_away" min="800" max="2400" value="1600">
 
-    return {
-        "Standard": seatCounts[0],
-        "Deluxe": seatCounts[1],
-        "Premium": seatCounts[2],
-        "Members": seatCounts[3]
-    };
-}
+    <label>Weather:</label>
+    <select id="weather">
+        <option value="Sunny">Sunny</option>
+        <option value="Overcast">Overcast</option>
+        <option value="Hot">Hot</option>
+    </select>
 
-function calculateHomeParticipation(homeDiv, awayDiv, weather, matchFormat) {
-    let baseHomeParticipation = 0.50;
-    let divisionFactor = (6 - homeDiv) * 0.04;
-    let awayDivisionFactor = (6 - awayDiv) * -0.03;
+    <label>Match Format:</label>
+    <select id="match_format">
+        <option value="T20">T20</option>
+        <option value="OD">OD</option>
+    </select>
 
-    if (homeDiv === 1 && awayDiv === 5) return [0.83, 0.17];
+    <button onclick="calculateAttendance()">Calculate</button>
 
-    const weatherFactors = { "Sunny": 0.05, "Overcast": 0.09, "Hot": 0.08 };
-    const formatFactors = { "OD": 0.02, "T20": 0.04 };
-    
-    let homeParticipation = baseHomeParticipation + divisionFactor + awayDivisionFactor + (weatherFactors[weather] || 0) + (formatFactors[matchFormat] || 0);
-    
-    if (homeDiv === awayDiv) {
-        homeParticipation = Math.max(0.58, Math.min(0.66, homeParticipation));
-    } else {
-        homeParticipation = Math.max(0.45, Math.min(0.70, homeParticipation));
-    }
-
-    return [parseFloat(homeParticipation.toFixed(2)), parseFloat((1 - homeParticipation).toFixed(2))];
-}
-
-function logisticFunction(x, midpoint, steepness, maxValue) {
-    return maxValue / (1 + Math.exp(-steepness * (x - midpoint)));
-}
-
-function calculateAttendance(
-    homeDiv, awayDiv, fanBaseHome, fanBaseAway,
-    moraleHome, moraleAway, ratingHome, ratingAway,
-    weather, matchFormat
-) {
-    const BASE_DIV_ATTENDANCE_RANGE = {
-        5: [800, 1200], 4: [3000, 4000], 3: [5000, 7000], 2: [8500, 10500], 1: [15000, 18000]
-    };
-
-    function getBaseAttendance(div, rating) {
-        let [baseLower, baseUpper] = BASE_DIV_ATTENDANCE_RANGE[div];
-        return baseLower + ((rating - 800) / (2400 - 800)) * (baseUpper - baseLower);
-    }
-
-    let baseHome = getBaseAttendance(homeDiv, ratingHome);
-    let baseAway = getBaseAttendance(awayDiv, ratingAway);
-
-    let casualHome = baseHome * 1.1;
-    let casualAway = baseAway * 0.6;
-
-    let moraleImpactHome = logisticFunction(moraleHome, 50, 0.15, 0.1);
-    let moraleImpactAway = logisticFunction(moraleAway, 50, 0.15, 0.1);
-
-    let loyalHome = Math.round(fanBaseHome * (1 + moraleImpactHome));
-    let loyalAway = Math.round(fanBaseAway * (1 + moraleImpactAway));
-
-    let adjustedHome = Math.round(casualHome + loyalHome);
-    let adjustedAway = Math.round(casualAway + loyalAway);
-    
-    let [homePart, awayPart] = calculateHomeParticipation(homeDiv, awayDiv, weather, matchFormat);
-    
-    let totalAttendance = Math.round(adjustedHome * homePart) + Math.round(adjustedAway * awayPart);
-
-    let distribution = calculateSeatDistribution(homeDiv, awayDiv, fanBaseHome, fanBaseAway,
-                                                 moraleHome, moraleAway, ratingHome, ratingAway,
-                                                 weather, matchFormat, totalAttendance);
-
-    return { totalAttendance, distribution };
-}
-
-    // Form submission handler.
-    document.getElementById('attendanceForm').addEventListener('submit', function(event) {
-      event.preventDefault();
-
-      // Gather Home Team values.
-      const home_div = parseInt(document.getElementById('home_div').value);
-      const fan_base_home = parseInt(document.getElementById('fan_base_home').value);
-      const rating_home = parseInt(document.getElementById('rating_home').value);
-      const morale_home = parseFloat(document.getElementById('morale_home').value);
-
-      // Gather Away Team values.
-      const away_div = parseInt(document.getElementById('away_div').value);
-      const fan_base_away = parseInt(document.getElementById('fan_base_away').value);
-      const rating_away = parseInt(document.getElementById('rating_away').value);
-      const morale_away = parseFloat(document.getElementById('morale_away').value);
-
-      // Gather bottom options.
-      const pitch = document.getElementById('pitch').value;
-      const weather = document.getElementById('weather').value;
-      const match_format = document.getElementById('match_format').value;
-
-      // Call the calculateAttendance function.
-      const result = calculateAttendance(
-        home_div, away_div, fan_base_home, fan_base_away,
-        morale_home, morale_away, rating_home, rating_away,
-        pitch, weather, match_format
-      );
-
-      // Display the results.
-      document.getElementById('totalAttendance').innerText = "Total Attendance: " + result.total_attendance;
-      const seatList = document.getElementById('seatDistribution');
-      seatList.innerHTML = "";
-      for (const category in result.seat_distribution) {
-        const li = document.createElement("li");
-        li.innerText = category + ": " + result.seat_distribution[category];
-        seatList.appendChild(li);
-      }
-      document.getElementById('result').style.display = "block";
-    });
-  </script>
+    <div id="result"></div>
 </body>
 </html>

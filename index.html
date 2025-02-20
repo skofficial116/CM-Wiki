@@ -7,7 +7,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="styles.css">
-    <!-- <script src="script.js"></script> -->
     <style>
         * {
             padding: 0px;
@@ -17,19 +16,33 @@
 </head>
 
 <body>
-    <center>
-        <div class="background-container">
+    <div class="background-container">
 
-            <img class="background-image" src="crowd2.jpeg" alt="Background">
-            <div id="validation" style="color:rgb(255, 255, 255)">kjsgujfhgikufhoeoifeghbgegvebn</div>
+        <img class="background-image" src="crowd2.jpeg" alt="Background">
+        <div id="validation" style="color:rgb(255, 255, 255)"></div>
 
-            <div class="overlay">
-            </div>
+        <div class="overlay">
         </div>
+    </div>
+
+    <div class="nav">
+        <ul>
+            <li> <a href="">Home</a></li>
+            <li> <a href="">Tools</a></li>
+            <li> <a href="">Guide</a></li>
+            <li> <a href="">About</a></li>
+        </ul>
+    </div>
+    <center>
+
+
         <h2 class="title">CM Attendance Calculator</h2>
-        
+
         <div class="main">
             <div class="home">
+                <div class="head">
+                    <center><b>Home Team</b></center>
+                </div>
                 <div class="inputdiv" style="background-color: rgb(172, 254, 164);">
                     <label for="homeDivision">Division:</label>
                     <select id="homeDivision" required>
@@ -42,32 +55,35 @@
                 </div>
                 <div class="inputdiv" style="background-color: rgb(164, 164, 254);">
                     <label for="homeFans">Fans:</label>
-                    <input type="number" placeholder=" (0-50000)" id="homeFans" oninput="updateSlider('homeFans', 'homeFansSlider')" min="0"
-                        max="50000"  >
+                    <input type="number" placeholder=" (0-50000)" id="homeFans"
+                        oninput="updateSlider('homeFans', 'homeFansSlider')" min="0" max="50000">
                     <input type="range" id="homeFansSlider" oninput="updateSliderValue('homeFans', 'homeFansSlider')"
-                        min="0" max="50000"  >
+                        min="0" max="50000">
                     <br> <br>
                 </div>
                 <div class="inputdiv" style="background-color: pink;">
                     <label for="homeRating">Ratings:</label>
-                    <input type="number" placeholder=" (800-2400)" id="homeRating" oninput="updateSlider('homeRating', 'homeRatingSlider')"
-                        min="800" max="2400"  >
+                    <input type="number" placeholder=" (800-2400)" id="homeRating"
+                        oninput="updateSlider('homeRating', 'homeRatingSlider')" min="800" max="2400">
                     <input type="range" id="homeRatingSlider"
-                        oninput="updateSliderValue('homeRating', 'homeRatingSlider')" min="800" max="2400"  >
+                        oninput="updateSliderValue('homeRating', 'homeRatingSlider')" min="800" max="2400">
                     <br> <br>
                 </div>
 
                 <div class="inputdiv" style="background-color: rgb(255, 255, 192);">
                     <label for="homeMorale">Morale:</label>
-                    <input type="number" placeholder=" (0-100)" id="homeMorale" oninput="updateSlider('homeMorale', 'homeMoraleSlider')"
-                        min="0" max="100"  >
+                    <input type="number" placeholder=" (0-100)" id="homeMorale"
+                        oninput="updateSlider('homeMorale', 'homeMoraleSlider')" min="0" max="100">
                     <input type="range" id="homeMoraleSlider"
-                        oninput="updateSliderValue('homeMorale', 'homeMoraleSlider')" min="0" max="100"  >
+                        oninput="updateSliderValue('homeMorale', 'homeMoraleSlider')" min="0" max="100">
                     <br> <br>
                 </div>
             </div>
 
             <div class="away">
+                <div class="head">
+                    <center><b>Away Team</b></center>
+                </div>
                 <div class="inputdiv" style="background-color: rgb(172, 254, 164);">
                     <label for="awayDivision">Division:</label>
                     <select id="awayDivision" required>
@@ -80,33 +96,33 @@
                 </div>
                 <div class="inputdiv" style="background-color: rgb(164, 164, 254);">
                     <label for="awayFans">Fans:</label>
-                    <input type="number" placeholder=" (0-50000)" id="awayFans" oninput="updateSlider('awayFans', 'awayFansSlider')" min="0"
-                        max="50000"  >
+                    <input type="number" placeholder=" (0-50000)" id="awayFans"
+                        oninput="updateSlider('awayFans', 'awayFansSlider')" min="0" max="50000">
                     <input type="range" id="awayFansSlider" oninput="updateSliderValue('awayFans', 'awayFansSlider')"
-                        min="0" max="50000"  >
+                        min="0" max="50000">
                     <br> <br>
                 </div>
                 <div class="inputdiv" style="background-color: pink;">
                     <label for="awayRating">Ratings:</label>
-                    <input type="number" placeholder=" (800-2400)" id="awayRating" oninput="updateSlider('awayRating', 'awayRatingSlider')"
-                        min="800" max="2400"  >
+                    <input type="number" placeholder=" (800-2400)" id="awayRating"
+                        oninput="updateSlider('awayRating', 'awayRatingSlider')" min="800" max="2400">
                     <input type="range" id="awayRatingSlider"
-                        oninput="updateSliderValue('awayRating', 'awayRatingSlider')" min="800" max="2400"  >
+                        oninput="updateSliderValue('awayRating', 'awayRatingSlider')" min="800" max="2400">
                     <br> <br>
                 </div>
 
                 <div class="inputdiv" style="background-color: rgb(255, 255, 192);">
                     <label for="awayMorale">Morale:</label>
-                    <input type="number" placeholder=" (0-100)" id="awayMorale" oninput="updateSlider('awayMorale', 'awayMoraleSlider')"
-                        min="0" max="100"  >
+                    <input type="number" placeholder=" (0-100)" id="awayMorale"
+                        oninput="updateSlider('awayMorale', 'awayMoraleSlider')" min="0" max="100">
                     <input type="range" id="awayMoraleSlider"
-                        oninput="updateSliderValue('awayMorale', 'awayMoraleSlider')" min="0" max="100"  >
+                        oninput="updateSliderValue('awayMorale', 'awayMoraleSlider')" min="0" max="100">
                     <br> <br>
                 </div>
             </div>
 
         </div>
-        
+
         <div class="external">
             <div class="matchType">
                 <div class="inputdiv two" style="background-color: rgb(223, 164, 254);">
@@ -128,14 +144,10 @@
                 </div>
             </div>
             <br>
-            <!-- homeDiv, awayDiv, fanBaseHome, fanBaseAway, moraleHome, moraleAway, ratingHome, ratingAway, weather, matchFormat -->
-
-
         </div>
         <br>
         <center>
             <div class="block">
-                <!-- Single button used for both success and error states -->
                 <button class="button" id="submit-btn">Calculate</button>
             </div>
         </center>

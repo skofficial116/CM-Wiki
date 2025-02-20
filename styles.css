@@ -1,0 +1,514 @@
+.background-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: -1;
+}
+
+
+.background-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+body {
+    min-height: 450px;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(21, 21, 21, 0.151);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+}
+
+.validation {
+    display: none;
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
+.main {
+    display: flex;
+    height: auto;
+    justify-content: space-evenly;
+}
+
+.external {
+    margin: 2vh 0vw 0vh 0vw;
+    display: flex;
+    justify-content: center;
+}
+
+.home,
+.away {
+    display: flexbox;
+    /* min-width: 40vw; */
+    max-width: 300px;
+    height: 100%;
+    min-height: 40vh;
+    border: 2px solid black;
+    padding: 2px;
+    background-color: orange;
+}
+
+.home {
+    margin-left: 10px;
+}
+
+.away {
+    margin-right: 10px;
+}
+
+.main .inputdiv {
+    padding: 4px;
+    margin: 3px;
+    height: 11vh;
+    border: 1px double black;
+}
+
+/* Base slider styles */
+input[type="range"] {
+    -webkit-appearance: none;
+    /* remove default browser styles */
+    appearance: none;
+    width: 70%;
+    height: 1%;
+    /* adjust slider width as needed */
+    background: transparent;
+    cursor: pointer;
+}
+
+/* Track styling (WebKit) */
+input[type="range"]::-webkit-slider-runnable-track {
+    background: #ddd;
+    height: 5px;
+    /* track thickness */
+    border-radius: 4px;
+}
+
+/* Track styling (Firefox) */
+input[type="range"]::-moz-range-track {
+    background: #ddd;
+    height: 8px;
+    /* border-radius: 4px; */
+}
+
+/* Large circle thumb (WebKit) */
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 10px;
+    height: 10px;
+    margin-top: -2.5px;
+    border-radius: 50%;
+    background: #0080ff;
+    /* circle color */
+    cursor: pointer;
+    border: 1px solid black;
+}
+
+/* Large circle thumb (Firefox) */
+input[type="range"]::-moz-range-thumb {
+    width: 10px;
+    height: 10px;
+    margin-top: -2.5px;
+    border-radius: 50%;
+    background: #0080ff;
+    /* circle color */
+    cursor: pointer;
+    border: 1px solid black;
+}
+
+
+input[type="number"] {
+    width: 40%;
+    padding: 2px 0px 1px 0px;
+    /* height: 50%; */
+    font-size: .9em;
+    cursor: pointer;
+}
+
+.external div {
+    width: 160px;
+    height: 30px;
+}
+
+
+.external .inputdiv {
+    padding: 3px 4px;
+    border: 5px double black;
+}
+
+.main select {
+    /* width: 100px; */
+    width: 50%;
+    height: 10vh;
+    font-size: 13px;
+    color: #333;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+
+.inputdiv:first-child {
+    height: 4.5vh;
+}
+
+#homeDivision,
+#awayDivision {
+    height: 4vh;
+}
+
+#homeRating,
+#homeMorale,
+#homeFans,
+#awayRating,
+#awayMorale,
+#awayFans {
+    height: 2vh;
+    color: blue;
+    margin: 10px;
+}
+
+h1 {
+    font-size: 1.5em;
+}
+
+.block {
+    margin: 1px 0px 1px 0px;
+    justify-self: center;
+    justify-content: center;
+    justify-items: center;
+}
+
+
+
+.button {
+    display: inline-block;
+    width: auto;
+    background: #8bc34a;
+    color: #fefefe;
+    font-size: 1.2em;
+    padding: .3em;
+    border-radius: 4px;
+    text-align: center;
+    position: relative;
+    cursor: pointer;
+    justify-self: center;
+    transition: border-radius linear 0.05s, width linear 0.05s;
+}
+
+.button:focus {
+    outline: 0;
+}
+
+/* Base animated state: change shape and hide text */
+.button.animate {
+    width: 34px;
+    height: 34px;
+    /* min-width: 0; */
+    border-radius: 50%;
+    color: transparent;
+    border: 0;
+}
+
+/* The spinning pseudo-element */
+.button.animate:after {
+    position: absolute;
+    content: '';
+    width: 12px;
+    height: 12px;
+    border: 4px solid #fefefe;
+    border-radius: 50%;
+    border-left-color: transparent;
+    left: 50%;
+    top: 50%;
+    /* padding: 10px; */
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    -webkit-animation: spin 1.5s ease-in forwards;
+    animation: spin 1s ease-in forwards;
+}
+
+/* Success: show check mark animation */
+.button.animate.success:before {
+    position: absolute;
+    content: '';
+    width: 12px;
+    height: 6.25px;
+    border: 4px solid #fefefe;
+    border-right: 0;
+    border-top: 0;
+    left: 50%;
+    top: 50%;
+    -webkit-transform: translate(-50%, -50%) rotate(0deg) scale(0);
+    transform: translate(-50%, -50%) rotate(0deg) scale(0);
+    -webkit-animation: success 0.15s ease-in forwards;
+    animation: success 0.15s ease-in forwards;
+    -webkit-animation-delay: 1s;
+    animation-delay: 1s;
+}
+
+/* Error: vibrate & show exclamation mark */
+.button.animate.error {
+    position: relative;
+    -webkit-animation: vibrate 0.5s ease-in forwards;
+    animation: vibrate 0.5s ease-in forwards;
+    -webkit-animation-delay: 1s;
+    animation-delay: 1s;
+}
+
+.button.animate.error:before {
+    color: #fff;
+    position: absolute;
+    content: '!';
+    font-size: 1.45rem;
+    font-weight: bold;
+    text-align: center;
+    left: 50%;
+    top: 50%;
+    -webkit-transform: translate(-50%, -50%) scale(0);
+    transform: translate(-50%, -50%) scale(0);
+    -webkit-animation: error 0.5s ease-in forwards;
+    animation: error 0.5s ease-in forwards;
+    -webkit-animation-delay: 1s;
+    animation-delay: 1s;
+}
+
+/* Keyframes for the spin animation */
+@keyframes spin {
+    0% {
+        transform: translate(-50%, -50%) rotate(0deg) scale(1);
+    }
+
+    90% {
+        transform: translate(-50%, -50%) rotate(1080deg) scale(1);
+    }
+
+    100% {
+        transform: scale(0);
+    }
+}
+
+@-webkit-keyframes spin {
+    0% {
+        -webkit-transform: translate(-50%, -50%) rotate(0deg) scale(1);
+    }
+
+    98% {
+        -webkit-transform: translate(-50%, -50%) rotate(1080deg) scale(1);
+    }
+
+    100% {
+        -webkit-transform: translate(-50%, -50%) rotate(1080deg) scale(0);
+    }
+}
+
+/* Keyframes for the success animation (check mark) */
+@keyframes success {
+    from {
+        transform: translate(-50%, -50%) rotate(0) scale(0);
+    }
+
+    to {
+        transform: translate(-50%, -50%) rotate(-45deg) scale(1);
+    }
+}
+
+@-webkit-keyframes success {
+    from {
+        -webkit-transform: translate(-50%, -50%) rotate(0) scale(0);
+    }
+
+    to {
+        -webkit-transform: translate(-50%, -50%) rotate(-45deg) scale(1);
+    }
+}
+
+/* Keyframes for the error animation */
+@keyframes error {
+    from {
+        transform: translate(-50%, -50%) scale(0);
+    }
+
+    to {
+        transform: translate(-50%, -50%) scale(1);
+        background-color: #f44336;
+    }
+}
+
+@-webkit-keyframes error {
+    from {
+        -webkit-transform: translate(-50%, -50%) scale(0);
+    }
+
+    to {
+        -webkit-transform: translate(-50%, -50%) scale(1);
+        background-color: #f44336;
+    }
+}
+
+/* Keyframes for the vibrate effect */
+@keyframes vibrate {
+
+    0%,
+    30%,
+    60%,
+    85%,
+    100% {
+        left: 0;
+        background-color: #f44336;
+    }
+
+    10%,
+    40%,
+    70%,
+    90% {
+        left: -2px;
+        background-color: #f44336;
+    }
+
+    20%,
+    50%,
+    80%,
+    95% {
+        left: 2px;
+        background-color: #f44336;
+    }
+}
+
+@-webkit-keyframes vibrate {
+
+    0%,
+    30%,
+    60%,
+    85%,
+    100% {
+        left: 0;
+        background-color: #f44336;
+    }
+
+    10%,
+    40%,
+    70%,
+    90% {
+        left: -2px;
+        background-color: #f44336;
+    }
+
+    20%,
+    50%,
+    80%,
+    95% {
+        left: 2px;
+        background-color: #f44336;
+    }
+}
+
+#resultdiv {
+    display: block;
+    width: 50vw;
+    margin-top: 2vh;
+    height: 20vh;
+    align-self: center;
+    justify-self: center;
+    border: 3px solid white;
+    background-color: rgba(13, 0, 255, 0.228);
+}
+
+.tv {
+    margin: 1vh 0 0 0;
+    justify-self: center;
+    height: 165px;
+    width: 300px;
+    border-radius: 10px;
+}
+
+.tv {
+    --border-width: 1px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2.5rem;
+    color: white;
+    background: #222;
+    border-radius: 10px;
+
+    &::after {
+        position: absolute;
+        content: "";
+        top: calc(-1 * var(--border-width));
+        left: calc(-1 * var(--border-width));
+        z-index: -1;
+        width: calc(100% + var(--border-width) * 2);
+        height: calc(100% + var(--border-width) * 2);
+        background: linear-gradient(60deg,
+                hsl(224, 85%, 66%),
+                hsl(269, 85%, 66%),
+                hsl(314, 85%, 66%),
+                hsl(359, 85%, 66%),
+                hsl(44, 85%, 66%),
+                hsl(89, 85%, 66%),
+                hsl(134, 85%, 66%),
+                hsl(179, 85%, 66%));
+        background-size: 300% 300%;
+        background-position: 0 50%;
+        border-radius: 10px;
+        animation: moveGradient 2s alternate infinite;
+    }
+}
+
+@keyframes moveGradient {
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+.tv2 {
+    height: 85%;
+    width: 600px;
+    border: 10px ridge black;
+    border-radius: 10px;
+    background-color: rgb(48, 47, 47);
+    justify-content: space-;
+}
+
+
+.result {
+    font-size: 16px;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-weight: 600;
+    margin: 6px 20px 4px 20px;
+    display: flex;
+}
+
+.total {
+    margin: 5px 20px 4px 20px;
+    font-size: 20px;
+    justify-self: center;
+    font-family: cursive;
+}
+
+.title {
+    margin-top: 10px;
+    margin-bottom: 18px;
+    justify-self: center;
+    font-family: 'Brush Script MT', cursive;
+    color: white;
+}

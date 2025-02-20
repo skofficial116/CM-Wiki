@@ -57,7 +57,6 @@ body {
 .home,
 .away {
     display: flexbox;
-    /* min-width: 40vw; */
     max-width: 300px;
     height: 100%;
     min-height: 40vh;
@@ -164,9 +163,12 @@ input[type="number"] {
     border-radius: 4px;
 }
 
+.head {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
 
-.inputdiv:first-child {
-    height: 4.5vh;
+.inputdiv:nth-child(2) {
+    height: 5vh;
 }
 
 #homeDivision,
@@ -481,7 +483,8 @@ h1 {
 }
 
 .tv2 {
-    height: 85%;
+    /* height: 85%; */
+    height: fit-content;
     width: 600px;
     border: 10px ridge black;
     border-radius: 10px;
@@ -504,11 +507,41 @@ h1 {
     justify-self: center;
     font-family: cursive;
 }
-
+.members{
+    margin-bottom: 15px;
+}
 .title {
     margin-top: 10px;
     margin-bottom: 18px;
     justify-self: center;
     font-family: 'Brush Script MT', cursive;
     color: white;
+}
+
+.nav {
+    background-color: #222;
+    padding: 10px;
+    position: sticky;
+    top: 0;
+    
+}
+
+li {
+    list-style: none;
+    display: inline;
+    padding: 6px;
+    font-size: 16px;
+
+    a {
+        font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+        text-decoration: none;
+        color: white;
+    }
+
+}
+
+a:hover {
+    padding: 0px;
+    border-style: ridge none solid none;
+    border-width: 2px 0px 2px 0;
 }

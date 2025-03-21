@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <nav></nav>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        * {
+            padding: 0px;
+            margin: 0px;
+        }
+    </style>
+</head>
+
+<body>
+    <script src="navbar.js"></script>
+    
+
+        <h2 class="title">CM Attendance Calculator</h2>
+
+        <div class="main">
+            <div class="home">
+                <div class="head">
+                    <center><b>Home Team</b></center>
+                </div>
+                <div class="inputdiv" style="background-color: rgb(172, 254, 164);">
+                    <label for="homeDivision">Division:</label>
+                    <select id="homeDivision" required>
+                        <option value="1">Division 1</option>
+                        <option value="2">Division 2</option>
+                        <option value="3">Division 3</option>
+                        <option value="4">Division 4</option>
+                        <option value="5">Division 5</option>
+                    </select> <br> <br>
+                </div>
+                <div class="inputdiv" style="background-color: rgb(164, 164, 254);">
+                    <label for="homeFans">Fans:</label>
+                    <input type="number" placeholder=" (0-50000)" id="homeFans"
+                        oninput="updateSlider('homeFans', 'homeFansSlider')" min="0" max="50000">
+                    <input type="range" id="homeFansSlider" oninput="updateSliderValue('homeFans', 'homeFansSlider')"
+                        min="0" max="50000">
+                    <br> <br>
+                </div>
+                <div class="inputdiv" style="background-color: pink;">
+                    <label for="homeRating">Ratings:</label>
+                    <input type="number" placeholder=" (800-2400)" id="homeRating"
+                        oninput="updateSlider('homeRating', 'homeRatingSlider')" min="800" max="2400">
+                    <input type="range" id="homeRatingSlider"
+                        oninput="updateSliderValue('homeRating', 'homeRatingSlider')" min="800" max="2400">
+                    <br> <br>
+                </div>
+
+                <div class="inputdiv" style="background-color: rgb(255, 255, 192);">
+                    <label for="homeMorale">Morale:</label>
+                    <input type="number" placeholder=" (0-100)" id="homeMorale"
+                        oninput="updateSlider('homeMorale', 'homeMoraleSlider')" min="0" max="100">
+                    <input type="range" id="homeMoraleSlider"
+                        oninput="updateSliderValue('homeMorale', 'homeMoraleSlider')" min="0" max="100">
+                    <br> <br>
+                </div>
+            </div>
+
+            <div class="away">
+                <div class="head">
+                    <center><b>Away Team</b></center>
+                </div>
+                <div class="inputdiv" style="background-color: rgb(172, 254, 164);">
+                    <label for="awayDivision">Division:</label>
+                    <select id="awayDivision" required>
+                        <option value="1">Division 1</option>
+                        <option value="2">Division 2</option>
+                        <option value="3">Division 3</option>
+                        <option value="4">Division 4</option>
+                        <option value="5">Division 5</option>
+                    </select> <br> <br>
+                </div>
+                <div class="inputdiv" style="background-color: rgb(164, 164, 254);">
+                    <label for="awayFans">Fans:</label>
+                    <input type="number" placeholder=" (0-50000)" id="awayFans"
+                        oninput="updateSlider('awayFans', 'awayFansSlider')" min="0" max="50000">
+                    <input type="range" id="awayFansSlider" oninput="updateSliderValue('awayFans', 'awayFansSlider')"
+                        min="0" max="50000">
+                    <br> <br>
+                </div>
+                <div class="inputdiv" style="background-color: pink;">
+                    <label for="awayRating">Ratings:</label>
+                    <input type="number" placeholder=" (800-2400)" id="awayRating"
+                        oninput="updateSlider('awayRating', 'awayRatingSlider')" min="800" max="2400">
+                    <input type="range" id="awayRatingSlider"
+                        oninput="updateSliderValue('awayRating', 'awayRatingSlider')" min="800" max="2400">
+                    <br> <br>
+                </div>
+
+                <div class="inputdiv" style="background-color: rgb(255, 255, 192);">
+                    <label for="awayMorale">Morale:</label>
+                    <input type="number" placeholder=" (0-100)" id="awayMorale"
+                        oninput="updateSlider('awayMorale', 'awayMoraleSlider')" min="0" max="100">
+                    <input type="range" id="awayMoraleSlider"
+                        oninput="updateSliderValue('awayMorale', 'awayMoraleSlider')" min="0" max="100">
+                    <br> <br>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="external">
+            <div class="matchType">
+                <div class="inputdiv two" style="background-color: rgb(223, 164, 254);">
+                    <label for="match">Match Type:</label>
+                    <select id="match" required>
+                        <option value="T20">T20</option>
+                        <option value="OD">OD</option>
+                    </select> <br> <br>
+                </div>
+            </div>
+            <div class="weatherType">
+                <div class="inputdiv two" style="background-color: rgb(254, 164, 164);">
+                    <label for="weather">Weather:</label>
+                    <select id="weather" required>
+                        <option value="Sunny">Sunny</option>
+                        <option value="Hot">Hot</option>
+                        <option value="Overcast">Overcast</option>
+                    </select>
+                </div>
+            </div>
+            <br>
+        </div>
+        <br>
+        <center>
+            <div class="block">
+                <button class="button" id="submit-btn">Calculate</button>
+            </div>
+        </center>
+
+        <script src="attendance.js"></script>
+        <div class="tv">
+            <div class="tv2" id="tv2">
+                <div class="total result" id="total">Total: </div>
+                <div class="standard result" id="standard">Standard: </div>
+                <div class="premium result" id="premium">Premium: </div>
+                <div class="deluxe result" id="deluxe">Deluxe: </div>
+                <div class="members result" id="members">Members: </div>
+
+            </div>
+        </div>
+    </center>
+
+</body>
+
+</html>

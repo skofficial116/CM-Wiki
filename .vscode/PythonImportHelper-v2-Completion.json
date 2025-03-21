@@ -1,0 +1,160 @@
+[
+    {
+        "label": "Flask",
+        "importPath": "flask",
+        "description": "flask",
+        "isExtraImport": true,
+        "detail": "flask",
+        "documentation": {}
+    },
+    {
+        "label": "request",
+        "importPath": "flask",
+        "description": "flask",
+        "isExtraImport": true,
+        "detail": "flask",
+        "documentation": {}
+    },
+    {
+        "label": "jsonify",
+        "importPath": "flask",
+        "description": "flask",
+        "isExtraImport": true,
+        "detail": "flask",
+        "documentation": {}
+    },
+    {
+        "label": "CORS",
+        "importPath": "flask_cors",
+        "description": "flask_cors",
+        "isExtraImport": true,
+        "detail": "flask_cors",
+        "documentation": {}
+    },
+    {
+        "label": "math",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "math",
+        "description": "math",
+        "detail": "math",
+        "documentation": {}
+    },
+    {
+        "label": "calculate_seat_distribution",
+        "kind": 2,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "def calculate_seat_distribution(\n    home_div, away_div, fan_base_home, fan_base_away,\n    morale_home, morale_away, rating_home, rating_away,\n    weather, match_format, final_attendance\n):\n    base_distributions = {\n        \"T20\": {\n            1: [37, 26, 23, 14],\n            2: [40, 27, 20, 13],\n            3: [44, 26, 18, 12],",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "calculate_home_participation",
+        "kind": 2,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "def calculate_home_participation(home_division, away_division, weather, match_format):\n    base_home_participation = 0.50\n    division_factor = (6 - home_division) * 0.04\n    away_division_factor = (6 - away_division) * -0.03\n    if home_division == 1 and away_division == 5:\n        return round(0.83, 2)\n    weather_factors = {\n        \"Sunny\": 0.05,\n        \"Overcast\": +0.09,\n        \"Hot\": +0.08,",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "exponential_rating_impact",
+        "kind": 2,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "def exponential_rating_impact(rating, scale_factor=0.05):\n    \"\"\"Exponential function to calculate rating impact on attendance.\"\"\"\n    normalized_rating = (rating - RATING_MIN) / (RATING_MAX - RATING_MIN)\n    return math.exp(scale_factor * normalized_rating) - 1\ndef logistic_function(x, midpoint, steepness, max_value):\n    \"\"\"Logistic function to model morale impact on attendance.\"\"\"\n    return max_value / (1 + math.exp(-steepness * (x - midpoint)))\ndef calculate_base_attendance(div, rating):\n    base_lower, base_upper = BASE_DIV_ATTENDANCE_RANGE[div]\n    return base_lower + ((rating - RATING_MIN) / (RATING_MAX - RATING_MIN)) * (base_upper - base_lower)",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "logistic_function",
+        "kind": 2,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "def logistic_function(x, midpoint, steepness, max_value):\n    \"\"\"Logistic function to model morale impact on attendance.\"\"\"\n    return max_value / (1 + math.exp(-steepness * (x - midpoint)))\ndef calculate_base_attendance(div, rating):\n    base_lower, base_upper = BASE_DIV_ATTENDANCE_RANGE[div]\n    return base_lower + ((rating - RATING_MIN) / (RATING_MAX - RATING_MIN)) * (base_upper - base_lower)\ndef calculate_attendance(\n    home_div, away_div, fan_base_home, fan_base_away,\n    morale_home, morale_away, rating_home, rating_away,\n    weather, match_format",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "calculate_base_attendance",
+        "kind": 2,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "def calculate_base_attendance(div, rating):\n    base_lower, base_upper = BASE_DIV_ATTENDANCE_RANGE[div]\n    return base_lower + ((rating - RATING_MIN) / (RATING_MAX - RATING_MIN)) * (base_upper - base_lower)\ndef calculate_attendance(\n    home_div, away_div, fan_base_home, fan_base_away,\n    morale_home, morale_away, rating_home, rating_away,\n    weather, match_format\n):\n    base_home = calculate_base_attendance(home_div, rating_home)\n    base_away = calculate_base_attendance(away_div, rating_away)",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "calculate_attendance",
+        "kind": 2,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "def calculate_attendance(\n    home_div, away_div, fan_base_home, fan_base_away,\n    morale_home, morale_away, rating_home, rating_away,\n    weather, match_format\n):\n    base_home = calculate_base_attendance(home_div, rating_home)\n    base_away = calculate_base_attendance(away_div, rating_away)\n    weather_factor_home = sum(weather_effects[weather][home_div]) / 2\n    weather_factor_away = sum(weather_effects[weather][away_div]) / 2\n    casual_home = int(base_home * weather_factor_home)",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "calculate",
+        "kind": 2,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "def calculate():\n    data = request.json\n    result = calculate_attendance(\n        home_div=data['home_div'],\n        away_div=data['away_div'],\n        fan_base_home=data['fan_base_home'],\n        fan_base_away=data['fan_base_away'],\n        morale_home=data['morale_home'],\n        morale_away=data['morale_away'],\n        rating_home=data['rating_home'],",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "app",
+        "kind": 5,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "app = Flask(__name__)\nCORS(app)  \nimport math\ndef calculate_seat_distribution(\n    home_div, away_div, fan_base_home, fan_base_away,\n    morale_home, morale_away, rating_home, rating_away,\n    weather, match_format, final_attendance\n):\n    base_distributions = {\n        \"T20\": {",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "BASE_DIV_ATTENDANCE_RANGE",
+        "kind": 5,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "BASE_DIV_ATTENDANCE_RANGE = {\n    5: (800, 1200),\n    4: (3000, 4000),\n    3: (5000, 7000),\n    2: (8500, 10500),\n    1: (15000, 18000),\n}\nweather_effects = {\n    \"Sunny\": {\n        1: (1.2, 1.3),",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "weather_effects",
+        "kind": 5,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "weather_effects = {\n    \"Sunny\": {\n        1: (1.2, 1.3),\n        2: (1.15, 1.2),\n        3: (1.1, 1.15),\n        4: (1.02, 1.08),\n        5: (0.95, 1.02)\n    },\n    \"Overcast\": {\n        1: (1.0, 1.1),",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "format_effects",
+        "kind": 5,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "format_effects = {\n    \"OD\": {\n        1: (1.15, 1.2),\n        2: (1.1, 1.15),\n        3: (1.05, 1.1),\n        4: (0.92, 1.0),\n        5: (1.02, 1.08)\n    },\n    \"T20\": {\n        1: (1.2, 1.25),",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "RATING_MIN",
+        "kind": 5,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "RATING_MIN = 800\nRATING_MAX = 2400\ndef exponential_rating_impact(rating, scale_factor=0.05):\n    \"\"\"Exponential function to calculate rating impact on attendance.\"\"\"\n    normalized_rating = (rating - RATING_MIN) / (RATING_MAX - RATING_MIN)\n    return math.exp(scale_factor * normalized_rating) - 1\ndef logistic_function(x, midpoint, steepness, max_value):\n    \"\"\"Logistic function to model morale impact on attendance.\"\"\"\n    return max_value / (1 + math.exp(-steepness * (x - midpoint)))\ndef calculate_base_attendance(div, rating):",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "RATING_MAX",
+        "kind": 5,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "RATING_MAX = 2400\ndef exponential_rating_impact(rating, scale_factor=0.05):\n    \"\"\"Exponential function to calculate rating impact on attendance.\"\"\"\n    normalized_rating = (rating - RATING_MIN) / (RATING_MAX - RATING_MIN)\n    return math.exp(scale_factor * normalized_rating) - 1\ndef logistic_function(x, midpoint, steepness, max_value):\n    \"\"\"Logistic function to model morale impact on attendance.\"\"\"\n    return max_value / (1 + math.exp(-steepness * (x - midpoint)))\ndef calculate_base_attendance(div, rating):\n    base_lower, base_upper = BASE_DIV_ATTENDANCE_RANGE[div]",
+        "detail": "app",
+        "documentation": {}
+    }
+]
